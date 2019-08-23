@@ -22,6 +22,15 @@ The example below shows you on how to use this image to connect to a VPN and set
                # close vpn
                - vpn-close
 
+Manual of the `vpn-open` script:
+
+    Open a VPN connection to the given host gateway url.
+    
+    Usage: vpn-open [options...] <url>
+        -u  The VPN username
+        -p  The VPN password
+        -s  The server to open a proxy tunnel to
+        -P  The server port to create a proxy tunnel to
 ### SOCKS5 Proxy
 The example below show you on how to user this image to connect to a VPN and setup a SOCKS5 proxy through the script tunnel of the VPN.
 

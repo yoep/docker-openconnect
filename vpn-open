@@ -14,9 +14,6 @@ while getopts ":u:p:s:P:" arg; do
         P)
           port=${OPTARG}
           ;;
-        *)
-          host=${OPTARG}
-          ;;
     esac
 done
 
@@ -24,7 +21,7 @@ shift $((OPTIND-1))
 host=$1
 
 if [[ -z ${host} ]]; then
-    echo "Failure: no VPN hostname provided"
+    echo "Failure: no VPN gateway url provided"
     exit 1
 fi
 
@@ -35,6 +32,16 @@ fi
 
 if [[ -z ${password} ]]; then
     echo "Failure: no VPN password provided"
+    exit 1
+fi
+
+if [[ -z ${server} ]]; then
+    echo "Failure: no server hostname/ip provided"
+    exit 1
+fi
+
+if [[ -z ${port} ]]; then
+    echo "Failure: no server port provided"
     exit 1
 fi
 
