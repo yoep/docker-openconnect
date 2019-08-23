@@ -1,0 +1,4 @@
+#!/bin/bash
+
+kill $(lsof -ti :61000)
+pkill openconnect

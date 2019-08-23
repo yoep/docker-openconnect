@@ -1,0 +1,42 @@
+#!/bin/bash
+
+while getopts ":u:p:s:P:" arg; do
+    case $arg in
+        u)
+          username=${OPTARG}
+          ;;
+        p)
+          password=${OPTARG}
+          ;;
+        s)
+          server=${OPTARG}
+          ;;
+        P)
+          port=${OPTARG}
+          ;;
+        *)
+          host=${OPTARG}
+          ;;
+    esac
+done
+
+shift $((OPTIND-1))
+host=$1
+
+if [[ -z ${host} ]]; then
+    echo "Failure: no VPN hostname provided"
+    exit 1
+fi
+
+if [[ -z ${username} ]]; then
+    echo "Failure: no VPN username provided"
+    exit 1
+fi
+
+if [[ -z ${password} ]]; then
+    echo "Failure: no VPN password provided"
+    exit 1
+fi
+
+bash -c "echo -n ${password} | openconnect -u${username} --passwd-on-stdin --script-tun --script 'ocproxy -k 2 -L 61000:${server}:${port}' ${host}" &
+sleep 5

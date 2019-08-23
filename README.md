@@ -16,12 +16,11 @@ The example below shows you on how to use this image to connect to a VPN and set
              image: yoep/openconnect
              script:
                # connect to vpn
-               - bash -c "echo -n ${VPN_PASSWORD} | openconnect -u${VPN_USER} --passwd-on-stdin --script-tun --script 'ocproxy -k 2 -L61000:${SERVER}:8080' ${VPN_HOST}" &
-               - sleep 5
+               - vpn_open -u ${VPN_USER} -p ${VPN_PASSWORD} -s ${SERVER} -P ${SERVER_PORT} ${VPN_HOST}
                # execute request over VPN
                - curl https://localhost:61000/apps/v1beta1/namespaces/
 
-### Proxy SOCKS5
+### SOCKS5 Proxy
 The example below show you on how to user this image to connect to a VPN and setup a SOCKS5 proxy through the script tunnel of the VPN.
 
     pipelines:
