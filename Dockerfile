@@ -5,8 +5,5 @@ RUN apt-get update && apt-get install -y openconnect ocproxy curl lsof procps &&
     rm -rf /var/cache/apt/* && \
     rm -rf /var/lib/apt/lists/*
 
-COPY ./vpn-open /usr/bin/vpn-open
-RUN chmod +x /usr/bin/vpn-open
-
-COPY ./vpn-close /usr/bin/vpn-close
-RUN chmod +x /usr/bin/vpn-close
+COPY vpn-open vpn-close /usr/bin/
+RUN chmod +x /usr/bin/vpn-open & chmod +x /usr/bin/vpn-close
