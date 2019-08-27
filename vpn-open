@@ -1,6 +1,24 @@
 #!/bin/bash
 
-while getopts ":u:p:s:P:" arg; do
+# Variables
+local_proxy_port=61000
+socks5=false
+
+# Functions
+usage() {
+    echo "Open a VPN connection to the given host gateway url.
+
+Usage: vpn-open [options...] <url>
+    -u  The VPN username
+    -p  The VPN password
+    -s  The server hostname or IP to open a proxy tunnel to
+    -P  The server port to connect & create a proxy tunnel to
+    -L  The local proxy port (default: 61000)
+    -5  Use a SOCKS5 proxy instead of a proxy port tunnel"
+    exit 0;
+}
+
+while getopts ":u:p:s:P:L:5h" arg; do
     case $arg in
         u)
           username=${OPTARG}
@@ -12,7 +30,16 @@ while getopts ":u:p:s:P:" arg; do
           server=${OPTARG}
           ;;
         P)
-          port=${OPTARG}
+          server_port=${OPTARG}
+          ;;
+        L)
+          local_proxy_port=${OPTARG}
+          ;;
+        5)
+          socks5=true
+          ;;
+        *)
+          usage
           ;;
     esac
 done
@@ -35,15 +62,23 @@ if [[ -z ${password} ]]; then
     exit 1
 fi
 
-if [[ -z ${server} ]]; then
+if [[ ${socks5} = false && -z ${server} ]]; then
     echo "Failure: no server hostname/ip provided"
     exit 1
 fi
 
-if [[ -z ${port} ]]; then
+if [[ ${socks5} = false && -z ${server_port} ]]; then
     echo "Failure: no server port provided"
     exit 1
 fi
 
-bash -c "echo -n ${password} | openconnect -u${username} --passwd-on-stdin --script-tun --script 'ocproxy -k 2 -L 61000:${server}:${port}' ${host}" &
+if [[ ${socks5} ]]; then
+    echo "Creating SOCKS5 proxy..."
+    bash -c "echo -n ${password} | openconnect -u${username} --passwd-on-stdin --script-tun --script 'ocproxy -k 2 -D${local_proxy_port}' ${host}" &
+else
+    echo "Creating proxy port tunnel..."
+    bash -c "echo -n ${password} | openconnect -u${username} --passwd-on-stdin --script-tun --script 'ocproxy -k 2 -L${local_proxy_port}:${server}:${server_port}' ${host}" &
+fi
+
 sleep 5
+echo "Opened proxy port on :${local_proxy_port}"
