@@ -72,7 +72,7 @@ if [[ ${socks5} = false && -z ${server_port} ]]; then
     exit 1
 fi
 
-if [[ ${socks5} ]]; then
+if [[ ${socks5} = true ]]; then
     echo "Creating SOCKS5 proxy..."
     bash -c "echo -n ${password} | openconnect -u${username} --passwd-on-stdin --script-tun --script 'ocproxy -k 2 -D${local_proxy_port}' ${host}" &
 else
