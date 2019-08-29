@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Variables
-local_proxy_port=61000
-socks5=false
+# variables
+LOCAL_PROXY_PORT=61000
+SOCKS5=false
 
-# Functions
+# functions
 usage() {
     echo "Open a VPN connection to the given host gateway url.
 
@@ -21,22 +21,22 @@ Usage: vpn-open [options...] <url>
 while getopts ":u:p:s:P:L:5h" arg; do
     case $arg in
         u)
-          username=${OPTARG}
+          USERNAME=${OPTARG}
           ;;
         p)
-          password=${OPTARG}
+          PASSWORD=${OPTARG}
           ;;
         s)
-          server=${OPTARG}
+          SERVER=${OPTARG}
           ;;
         P)
-          server_port=${OPTARG}
+          SERVER_PORT=${OPTARG}
           ;;
         L)
-          local_proxy_port=${OPTARG}
+          LOCAL_PROXY_PORT=${OPTARG}
           ;;
         5)
-          socks5=true
+          SOCKS5=true
           ;;
         *)
           usage
@@ -45,40 +45,40 @@ while getopts ":u:p:s:P:L:5h" arg; do
 done
 
 shift $((OPTIND-1))
-host=$1
+HOST=$1
 
-if [[ -z ${host} ]]; then
+if [[ -z ${HOST} ]]; then
     echo "Failure: no VPN gateway url provided"
     exit 1
 fi
 
-if [[ -z ${username} ]]; then
+if [[ -z ${USERNAME} ]]; then
     echo "Failure: no VPN username provided"
     exit 1
 fi
 
-if [[ -z ${password} ]]; then
+if [[ -z ${PASSWORD} ]]; then
     echo "Failure: no VPN password provided"
     exit 1
 fi
 
-if [[ ${socks5} = false && -z ${server} ]]; then
+if [[ ${SOCKS5} = false && -z ${SERVER} ]]; then
     echo "Failure: no server hostname/ip provided"
     exit 1
 fi
 
-if [[ ${socks5} = false && -z ${server_port} ]]; then
+if [[ ${SOCKS5} = false && -z ${SERVER_PORT} ]]; then
     echo "Failure: no server port provided"
     exit 1
 fi
 
-if [[ ${socks5} = true ]]; then
-    echo "Creating SOCKS5 proxy..."
-    bash -c "echo -n ${password} | openconnect -u${username} --passwd-on-stdin --script-tun --script 'ocproxy -k 2 -D${local_proxy_port}' ${host}" &
+if [[ ${SOCKS5} = true ]]; then
+    echo "Creating SOCKS5 proxy"
+    bash -c "echo -n ${PASSWORD} | openconnect -u${USERNAME} --passwd-on-stdin --script-tun --script 'ocproxy -k 2 -D${LOCAL_PROXY_PORT}' ${HOST}" &
 else
-    echo "Creating proxy port tunnel..."
-    bash -c "echo -n ${password} | openconnect -u${username} --passwd-on-stdin --script-tun --script 'ocproxy -k 2 -L${local_proxy_port}:${server}:${server_port}' ${host}" &
+    echo "Creating proxy port tunnel"
+    bash -c "echo -n ${PASSWORD} | openconnect -u${USERNAME} --passwd-on-stdin --script-tun --script 'ocproxy -k 2 -L${LOCAL_PROXY_PORT}:${SERVER}:${SERVER_PORT}' ${HOST}" &
 fi
 
 sleep 5
-echo "Opened proxy port on :${local_proxy_port}"
+echo "Opened proxy port on :${LOCAL_PROXY_PORT}"

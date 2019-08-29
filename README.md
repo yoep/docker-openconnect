@@ -58,3 +58,4 @@ The example below show you on how to user this image to connect to a VPN and set
     Close the current VPN connection.
     
     Usage: vpn-close
+        -L  The local proxy port (default: 61000)

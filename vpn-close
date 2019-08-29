@@ -1,4 +1,36 @@
 #!/bin/bash
 
-kill $(lsof -ti :61000)
+# variables
+LOCAL_PROXY_PORT=61000
+
+# functions
+usage() {
+    echo "Close the current VPN connection.
+
+Usage: vpn-close
+    -L  The local proxy port (default: 61000)"
+    exit 0;
+}
+
+while getopts ":L:h" arg; do
+    case $arg in
+        L)
+          LOCAL_PROXY_PORT=${OPTARG}
+          ;;
+        *)
+          usage
+          ;;
+    esac
+done
+
+# get the process id of the proxy tunnel
+PROCESS_ID=$(lsof -ti :${LOCAL_PROXY_PORT})
+
+# check if the proxy tunnel is still running before trying to kill it
+if [[ ! -z ${PROCESS_ID} ]]; then
+    echo "Closing proxy port :${LOCAL_PROXY_PORT}"
+    kill ${PROCESS_ID}
+fi
+
+# kill the openconnect process
 pkill openconnect
