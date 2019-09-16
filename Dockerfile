@@ -7,3 +7,8 @@ RUN apt-get update && apt-get install -y openconnect ocproxy curl lsof procps &&
 
 COPY vpn-open vpn-close /usr/bin/
 RUN chmod +x /usr/bin/vpn-open & chmod +x /usr/bin/vpn-close
+
+LABEL org.label-schema.schema-version="1.0" \
+    org.label-schema.name="yoep/openconnect" \
+    org.label-schema.description="Create a VPN tunnel to your on premise services" \
+    org.label-schema.vcs-url="https://github.com/yoep/docker-openconnect"
